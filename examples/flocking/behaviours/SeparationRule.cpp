@@ -13,6 +13,7 @@ Vector2 SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
         Vector2 position = boid->transform.position;
         int countCloseFlockmates = 0;
 
+        //iterate over close neighbors and calculate sum of positions
         for (Boid* neighbor : neighborhood)
         {
             if (Vector2::getDistance(neighbor->getPosition(), position) < desiredMinimalDistance)
@@ -21,9 +22,11 @@ Vector2 SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
                 separatingForce += position - neighbor->getPosition();
             }
         }
-
+        
+        //do not divide by 0
         if (countCloseFlockmates != 0)
         {
+            //average sum of the positions
             separatingForce = separatingForce / countCloseFlockmates;
         }
     }
