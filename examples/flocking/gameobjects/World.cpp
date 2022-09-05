@@ -72,8 +72,6 @@ void World::randomizeBoidPositionAndVelocity(Boid* boid) {
     auto size = engine->window->size();
 
     // todo: give boid a transform to store position, rotation... etc
-    //boid->transform = Transform();
-
     boid->setPosition({Random::Range(0,size.x), Random::Range(0,size.y)});
     boid->setVelocity(Vector2::up().Rotate(Random::Range(0,360)) * desiredSpeed); //Random dir
 }

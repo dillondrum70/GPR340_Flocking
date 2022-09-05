@@ -2,6 +2,8 @@
 #include "../gameobjects/Boid.h"
 #include "../gameobjects/World.h"
 
+#include <algorithm>
+
 Vector2 SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) {
     //Try to avoid boids too close
     Vector2 separatingForce = Vector2::zero();
@@ -19,7 +21,7 @@ Vector2 SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
             if (Vector2::getDistance(neighbor->getPosition(), position) < desiredMinimalDistance)
             {
                 countCloseFlockmates++;
-                separatingForce += position - neighbor->getPosition();
+                separatingForce += position - neighbor->getPosition(); //doing start - end instead of end - start so it is already negative
             }
         }
         
@@ -31,6 +33,26 @@ Vector2 SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
         }
     }
 
+    float xComp = separatingForce.x, yComp = separatingForce.y;
+    
+    if (xComp != 0)
+    {
+        xComp = 1 / xComp;
+    }
+    else
+    {
+        xComp = 1;
+    }
+    if (yComp != 0)
+    {
+        yComp = 1 / yComp;
+    }
+    else
+    {
+        yComp = 1;
+    }
+    
+    separatingForce = Vector2(xComp, yComp);
     separatingForce = Vector2::normalized(separatingForce);
 
     return separatingForce;
