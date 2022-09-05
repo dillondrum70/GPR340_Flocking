@@ -21,7 +21,17 @@ Vector2 SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
             if (Vector2::getDistance(neighbor->getPosition(), position) < desiredMinimalDistance)
             {
                 countCloseFlockmates++;
-                separatingForce += position - neighbor->getPosition(); //doing start - end instead of end - start so it is already negative
+                Vector2 displacement = position - neighbor->getPosition();
+
+                //invert magnitude of displacement so closer boids have a stronger pull than further ones
+                float mag = displacement.getMagnitude();
+                if (mag != 0)
+                {
+                    //rescale components to new magnitude length, inverse of current magnitude
+                    displacement *= (1 / mag) / mag;
+                }
+
+                separatingForce += displacement;//doing start - end instead of end - start so it is already negative
             }
         }
         
@@ -33,26 +43,6 @@ Vector2 SeparationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
         }
     }
 
-    float xComp = separatingForce.x, yComp = separatingForce.y;
-    
-    if (xComp != 0)
-    {
-        xComp = 1 / xComp;
-    }
-    else
-    {
-        xComp = 1;
-    }
-    if (yComp != 0)
-    {
-        yComp = 1 / yComp;
-    }
-    else
-    {
-        yComp = 1;
-    }
-    
-    separatingForce = Vector2(xComp, yComp);
     separatingForce = Vector2::normalized(separatingForce);
 
     return separatingForce;
