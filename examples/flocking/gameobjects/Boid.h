@@ -7,6 +7,11 @@
 
 class World;
 
+struct Static {
+    Vector2 position;
+    float orientation;
+};
+
 class Boid : public Particle {
 private:
     float detectionRadius = 100.;
@@ -24,6 +29,8 @@ public:
     bool drawDebugRadius = true;
     bool drawDebugRules = true;
     Vector3 circleColor = Vector3::Purple();
+
+    Static target;
 
     //Constructor
     explicit Boid(Engine *pEngine, World* pWorld);

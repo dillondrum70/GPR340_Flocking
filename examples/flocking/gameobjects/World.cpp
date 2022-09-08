@@ -6,6 +6,7 @@
 #include "../behaviours/SeparationRule.h"
 #include "../behaviours/CohesionRule.h"
 #include "../behaviours/AlignmentRule.h"
+#include "../behaviours/VFormation.h"
 #include "../behaviours/MouseInfluenceRule.h"
 #include "../behaviours/BoundedAreaRule.h"
 #include "../behaviours/WindRule.h"
@@ -27,6 +28,7 @@ void World::initializeRules() {
     boidsRules.emplace_back(std::make_unique<MouseInfluenceRule>(this, 2.f));
     boidsRules.emplace_back(std::make_unique<BoundedAreaRule>(this, 20, 8.f, false));
     boidsRules.emplace_back(std::make_unique<WindRule>(this, 1.f, 6.f, false));
+    boidsRules.emplace_back(std::make_unique<VFormationRule>(this, 2.9f));
 
     //Starting weights are saved as defaults
     defaultWeights.clear();
