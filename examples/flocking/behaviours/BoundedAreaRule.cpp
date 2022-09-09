@@ -11,29 +11,34 @@ Vector2 BoundedAreaRule::computeForce(const std::vector<Boid*>& neighborhood, Bo
 
     Vector2 windowSize = this->world->engine->window->size();
     Vector2 position = boid->getPosition();
+    //Vector2 velocity = boid->getVelocity();
 
     //reflect at right boundary
-    if (position.x >= windowSize.x - desiredDistance)
+    if (position.x >= windowSize.x - desiredDistance /* && velocity.x > 0*/)
     {
         force.x += -1;
+        //boid->velocity.x *= -1;
     }
 
     //left boundary
-    if (position.x <= desiredDistance)
+    if (position.x <= desiredDistance /*&& velocity.x < 0 */ )
     {
         force.x += 1;
+        //boid->velocity.x *= -1;
     }
 
     //upper boundary
-    if (position.y >= windowSize.y - desiredDistance)
+    if (position.y >= windowSize.y - desiredDistance /*&& velocity.y > 0 */ )
     {
         force.y += -1;
+        //boid->velocity.y *= -1;
     }
 
     //lower boundary
-    if(position.y <= desiredDistance)
+    if(position.y <= desiredDistance /*&& velocity.y < 0 */ )
     {
         force.y += 1;
+        //boid->velocity.y *= -1;
     }
 
     return force;
