@@ -7,6 +7,9 @@
 
 class Particle;
 
+class FormationManager;
+class VFormation;
+
 // todo: make world a game engine scene manager
 class World: public GameObject {
 private:

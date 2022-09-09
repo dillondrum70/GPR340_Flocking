@@ -11,6 +11,8 @@
 #include "../behaviours/BoundedAreaRule.h"
 #include "../behaviours/WindRule.h"
 
+#include "../behaviours/FormationManager.h"
+
 #if defined(_WIN32)
 #include "Windows.h"
 #include "Psapi.h"

@@ -51,15 +51,18 @@ void FormationManager::RemoveBoid(Boid* boid)
 void FormationManager::UpdateSlots()
 {
 	Static anchor = GetAnchorPoint();
-	Vector2 dir = Vector2(std::cos(anchor.orientation), std::sin(anchor.orientation));
+
+	int slotCount = slotAssignemnts.size();
 	
-	for (int i = 0; i < slotAssignments.size(); i++)
+	for (int i = 0; i < slotCount; i++)
 	{
 		int slotNumber = slotAssignments[i].slotNumber;
-		Static slot = pattern.GetSlotLocation(slotNumber);
+		Static slot = pattern.GetSlotLocation(slotNumber, slotCount);
 
 		Static location;
-		location.position = anchor.position + (dir * slot.position);
+		float xOffset = (slot.position.x * std::cos(anchor.orientation)) - (slot.position.y * std::sin(anchor.orientation));
+		float yOffset = (slot.position.x * std::sin(anchor.orientation)) + (slot.position.y * std::cos(anchor.orientation));
+		location.position = anchor.position + Vector2(xOffset, yOffset);
 		location.orientation = anchor.orientation + slot.orientation;
 
 		location.position -= driftOffset.position;

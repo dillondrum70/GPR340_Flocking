@@ -5,7 +5,10 @@
 
 class FormationManager {
 
-private:
+public:
+
+	FormationManager() {};
+	FormationManager(FormationPattern initialPattern) { pattern = initialPattern; };
 
 	//stores boids and slots they are assigned to
 	std::vector<SlotAssignment> slotAssignments;
@@ -28,7 +31,7 @@ private:
 	//send new target locations to boids
 	void UpdateSlots();
 
-	//the first position in formation
+	//the invisible "leader"
 	Static GetAnchorPoint();
 
 };

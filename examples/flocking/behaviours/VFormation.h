@@ -30,14 +30,20 @@ public:
 
 class VFormation : public FormationPattern
 {
+    int maxSlotNumber = 29;
+
+    int calculateNumberOfSlots(std::vector<SlotAssignment> slotAssignments);
+
     //drift offset when characters are in the set of slots
     Static GetDriftOffset(std::vector<SlotAssignment> slotAssignments) override;
 
     //return location of a slot index
-    Static GetSlotLocation(int slotNumber) override;
+    Static GetSlotLocation(int slotNumber, int totalSlots) override;
 
     //can pattern support <slotCount> slots?
     bool SupportsSlots(int slotCount) override;
+
+    float NextTriangularRoot(int num);
 };
 
 #endif
