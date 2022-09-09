@@ -20,9 +20,6 @@ public:
 	//minimum distance between slots
 	float minDistance = 15.f;
 
-	//return anchor of formation, different depnding on formation
-	virtual Static GetAnchorPoint() = 0;
-
 	//drift offset when characters are in the set of slots
 	virtual Static GetDriftOffset(std::vector<SlotAssignment> slotAssignments) = 0;
 

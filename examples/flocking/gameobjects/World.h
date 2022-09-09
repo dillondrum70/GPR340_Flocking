@@ -52,6 +52,9 @@ public:
     //cached list to manipulate objects
     std::vector<Boid*> boids;
 
+    //formations
+    std::vector<std::unique_ptr<FormationManager>> formations;
+
     /// METHODS
     explicit World(Engine* pEngine);
 

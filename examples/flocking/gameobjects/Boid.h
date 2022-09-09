@@ -16,6 +16,8 @@ class Boid : public Particle {
 private:
     float detectionRadius = 100.;
 
+    int formationID = -1; //the index of the formation the boid belongs to, -1 for not in formation
+
     std::vector<std::unique_ptr<FlockingRule>> rules;
 
     //Methods
@@ -52,6 +54,9 @@ public:
     float getDetectionRadius() const {
         return detectionRadius;
     }
+
+    void setFormationID(int idVal) { formationID = idVal; }
+    int getFormationID() const { return formationID; }
 
     void Update(float deltaTime) override;
 

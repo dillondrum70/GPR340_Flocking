@@ -1,5 +1,7 @@
 #include "FormationManager.h"
 
+#include "VFormation.h"
+
 
 #include "imgui.h"
 #include "../utils/ImGuiExtra.h"
@@ -24,6 +26,13 @@ bool FormationManager::AddBoid(Boid* boid)
 
 	if (pattern.SupportsSlots(occupiedSlots + 1))
 	{
+		//remove boid from current formation
+		int currentForm = boid->getFormationID();
+		if (currentForm >= 0)
+		{
+			this->world->formations[currentForm]->RemoveBoid(boid);
+		}
+
 		SlotAssignment newAssignment = SlotAssignment();
 		newAssignment.boid = boid;
 		slotAssignments.push_back(newAssignment);
@@ -52,7 +61,7 @@ void FormationManager::UpdateSlots()
 {
 	Static anchor = GetAnchorPoint();
 
-	int slotCount = slotAssignemnts.size();
+	int slotCount = slotAssignements.size();
 	
 	for (int i = 0; i < slotCount; i++)
 	{
@@ -82,6 +91,7 @@ Static FormationManager::GetAnchorPoint()
 	for (SlotAssignment a : slotAssignments)
 	{
 		count++;
+
 		//sum positions
 		result.position += a.boid->getPosition();
 
@@ -94,5 +104,5 @@ Static FormationManager::GetAnchorPoint()
 
 	result.orientation /= count; //average the orientations
 
-	return 
+	return result;
 }

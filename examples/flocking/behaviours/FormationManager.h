@@ -2,13 +2,22 @@
 #define FORMATION_MANAGER_H
 
 #include "FormationPattern.h"
+#include "../gameobjects/Boid.h"
+
+class VFormation;
 
 class FormationManager {
 
 public:
 
-	FormationManager() {};
-	FormationManager(FormationPattern initialPattern) { pattern = initialPattern; };
+	World* world;
+
+	FormationManager(World* worldVal) { world = worldVal; }; //VFormation will be default
+	FormationManager(World* worldVal, FormationPattern& initialPattern) 
+	{
+		world = worldVal;
+		pattern = initialPattern; 
+	};
 
 	//stores boids and slots they are assigned to
 	std::vector<SlotAssignment> slotAssignments;
@@ -17,7 +26,7 @@ public:
 	Static driftOffset;
 
 	//pattern used
-	FormationPattern& pattern;
+	FormationPattern& pattern = VFormation(); //VFormation will be default
 
 	//update assignment of characters to slots
 	void UpdateSlotAssignments();

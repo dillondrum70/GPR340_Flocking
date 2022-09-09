@@ -1,10 +1,57 @@
 #include "VFormation.h"
+#include "FormationManager.h"
 #include "../gameobjects/Boid.h"
+#include "../gameobjects/World.h"
 
 Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) {
     Vector2 FormationForce;
 
     FormationForce = boid->target.position - boid->getPosition();
+    
+    //join new formation or stay in current
+    if (!neighborhood.empty())
+    {
+        int currentID = boid->getFormationID();
+        Vector2 pos = boid->getPosition();
+
+        //check if formation ID needs to be changed
+        {
+            int closeForm = -1; //closest formation
+            int dist = boid->getDetectionRadius(); //how close closest formation is
+            
+            
+
+            //find closest formation
+            for (Boid* neighbor : neighborhood)
+            {
+                int neighborID = neighbor->getFormationID();
+                int neighborDist = Vector2::getDistance(neighbor->getPosition(), pos);
+
+                if (neighborID >= 0 && neighborDist < dist)
+                {
+                    closeForm = neighborID;
+                    dist = neighborDist;
+                }
+            }
+
+            if (closeForm < 0) //create new formation
+            {
+                this->world->formations.push_back(new FormationManager(this->world, new VFormation()));
+                boid->setFormationID(this->world->formations.size());
+            }
+            else if(closeForm != currentID)
+            {
+                this->world->formations[closeForm].Add(boid);
+            }
+            //else, closest formation is the formation the boid is currently in, do nothing
+        }
+
+        //if boid did not join new formation, move, otherwise the boid's target isn't set yet so they can't move towards slot
+        if (currentID == boid->getFormationID())
+        {
+            FormationForce = boid->target - pos;
+        }
+    }
 
     return FormationForce;
 }
@@ -41,7 +88,7 @@ Static VFormation::GetDriftOffset(std::vector<SlotAssignment> slotAssignments)
     return result;
 }
 
-//return location of a slot index
+//return location of a slot index relative to center of mass
 Static VFormation::GetSlotLocation(int slotNumber, int totalSlots)
 {
     Static result;

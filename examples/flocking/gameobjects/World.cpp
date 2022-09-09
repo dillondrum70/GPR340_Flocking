@@ -213,6 +213,12 @@ void World::drawRulesUI() {
 }
 
 void World::Update(float deltaTime) {
+    //move formations
+    for (std::unique_ptr<FormationManager>& form : formations)
+    {
+        form->UpdateSlots();
+    }
+
     // move the first boid
     if (engine->getInputArrow() != Vector2::zero() && getNbBoids() > 0) {
         Boid* firstBoid = *getAllBoids()->begin();
