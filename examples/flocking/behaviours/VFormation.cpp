@@ -36,12 +36,12 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
 
             if (closeForm < 0) //create new formation
             {
-                this->world->formations.push_back(new FormationManager(this->world, new VFormation()));
+                this->world->formations.push_back(std::make_unique<FormationManager>(this->world, VFormation()));
                 boid->setFormationID(this->world->formations.size());
             }
-            else if(closeForm != currentID)
+            else if(closeForm != currentID) //if IDs don't match, add boid to new formation
             {
-                this->world->formations[closeForm].Add(boid);
+                this->world->formations[closeForm].get()->AddBoid(boid);
             }
             //else, closest formation is the formation the boid is currently in, do nothing
         }
@@ -49,7 +49,7 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
         //if boid did not join new formation, move, otherwise the boid's target isn't set yet so they can't move towards slot
         if (currentID == boid->getFormationID())
         {
-            FormationForce = boid->target - pos;
+            FormationForce = boid->target.position - pos;
         }
     }
 
@@ -59,11 +59,12 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
 int VFormation::calculateNumberOfSlots(std::vector<SlotAssignment> slotAssignments)
 {
     int filledSlots = 0;
-    if (SlotAssignment assign : slotAssignments)
+
+    for (SlotAssignment assign : slotAssignments)
     {
         if (assign.slotNumber >= maxSlotNumber)
         {
-            filledSlots = assignment.slotNumber;
+            filledSlots = assign.slotNumber;
         }
     }
 
@@ -76,8 +77,8 @@ Static VFormation::GetDriftOffset(std::vector<SlotAssignment> slotAssignments)
     Static result;
     for (SlotAssignment assign : slotAssignments)
     {
-        location = GetSlotLocation(assign.slotNumber);
-        result.postition += location.position;
+        Static location = GetSlotLocation(assign.slotNumber, slotAssignments.size());
+        result.position += location.position;
         result.orientation += location.orientation;
     }
 
@@ -140,5 +141,5 @@ bool VFormation::SupportsSlots(int slotCount)
 
 float VFormation::NextTriangularRoot(int num)
 {
-    return std::floor((std::sqrt((8 * slotNumber) + 1) - 1) / 2) + 1;
+    return std::floor((std::sqrt((8 * num) + 1) - 1) / 2) + 1;
 }

@@ -3,8 +3,7 @@
 
 #include "FormationPattern.h"
 #include "../gameobjects/Boid.h"
-
-class VFormation;
+#include "VFormation.h"
 
 class FormationManager {
 
@@ -16,7 +15,7 @@ public:
 	FormationManager(World* worldVal, FormationPattern& initialPattern) 
 	{
 		world = worldVal;
-		pattern = initialPattern; 
+		pattern = initialPattern;
 	};
 
 	//stores boids and slots they are assigned to

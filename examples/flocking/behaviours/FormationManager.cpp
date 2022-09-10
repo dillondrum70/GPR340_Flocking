@@ -1,8 +1,5 @@
 #include "FormationManager.h"
 
-#include "VFormation.h"
-
-
 #include "imgui.h"
 #include "../utils/ImGuiExtra.h"
 #include "Polygon.h"
@@ -61,7 +58,7 @@ void FormationManager::UpdateSlots()
 {
 	Static anchor = GetAnchorPoint();
 
-	int slotCount = slotAssignements.size();
+	int slotCount = slotAssignments.size();
 	
 	for (int i = 0; i < slotCount; i++)
 	{
