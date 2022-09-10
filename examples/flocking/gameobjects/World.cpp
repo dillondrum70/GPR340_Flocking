@@ -220,6 +220,8 @@ void World::Update(float deltaTime) {
         {
             delete formations[i];
             formations.erase(formations.begin() + i);
+
+            UpdateFormationIDs();
         }
         else
         {
@@ -270,6 +272,15 @@ void World::Update(float deltaTime) {
                 anchor.position,
                 Vector3::Red());
         }
+    }
+}
+
+void World::UpdateFormationIDs()
+{
+    for (int i = 0; i < formations.size(); i++)
+    {
+        formations[i]->id = i;
+        formations[i]->UpdateIDs();
     }
 }
 

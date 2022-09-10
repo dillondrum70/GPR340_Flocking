@@ -19,6 +19,14 @@ void FormationManager::UpdateSlotAssignments()
 	}
 }
 
+void FormationManager::UpdateIDs()
+{
+	for (SlotAssignment* slot : slotAssignments)
+	{
+		slot->boid->setFormationID(id);
+	}
+}
+
 //add boid to slot, return false if all slots full
 bool FormationManager::AddBoid(Boid* boid)
 {
@@ -56,7 +64,6 @@ void FormationManager::RemoveBoid(Boid* boid)
 			if (boid && slotAssignments[i]->boid == boid)
 			{
 				slotAssignments.erase(slotAssignments.begin() + i);
-				break;
 			}
 		}
 		else
@@ -85,7 +92,7 @@ void FormationManager::UpdateSlots()
 		float xOffset = (slot.position.x * std::cos(anchor.orientation)) - (slot.position.y * std::sin(anchor.orientation));
 		float yOffset = (slot.position.x * std::sin(anchor.orientation)) + (slot.position.y * std::cos(anchor.orientation));
 		location.position = anchor.position + Vector2(xOffset, yOffset);
-		//location.position = anchor.position + slot.position;
+		//location.position = anchor.position + slot.position; //unrotated
 
 		location.orientation = anchor.orientation + slot.orientation;
 

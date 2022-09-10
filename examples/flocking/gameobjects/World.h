@@ -84,6 +84,8 @@ public:
     //Update
     void Update(float deltaTime) override;
 
+    void UpdateFormationIDs(); //sets formation IDs to their index in the vector
+
     void showConfigurationWindow(float deltaTime);
     void drawPerformanceUI(float deltaTime);
 

@@ -58,6 +58,9 @@ public:
 	//update assignment of characters to slots
 	void UpdateSlotAssignments();
 
+	//update formation IDs stored by boids when formation ID changes
+	void UpdateIDs();
+
 	//add boid to slot, return false if all slots full
 	bool AddBoid(Boid* boid);
 

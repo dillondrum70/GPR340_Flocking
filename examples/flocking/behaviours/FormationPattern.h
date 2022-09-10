@@ -18,7 +18,7 @@ class FormationPattern {
 
 public:
 	//minimum distance between slots
-	float minDistance = 15.f;
+	float minDistance = 30.f;
 
 	//drift offset when characters are in the set of slots
 	virtual Static GetDriftOffset(std::vector<SlotAssignment*> slotAssignments) = 0;
