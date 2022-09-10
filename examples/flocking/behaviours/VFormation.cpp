@@ -38,6 +38,8 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
             {
                 std::shared_ptr<FormationManager> manager = std::make_shared<FormationManager>(this->world, std::make_shared<VFormation>());
                 this->world->formations.push_back(std::move(manager));
+
+                this->world->formations[closeForm]->AddBoid(boid);
                 boid->setFormationID(this->world->formations.size());
             }
             else if(closeForm != currentID) //if IDs don't match, add boid to new formation

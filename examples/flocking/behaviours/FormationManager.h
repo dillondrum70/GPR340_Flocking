@@ -19,7 +19,7 @@ public:
 	};
 
 	//stores boids and slots they are assigned to
-	std::vector<std::shared_ptr<SlotAssignment>> slotAssignments;
+	std::vector<std::shared_ptr<SlotAssignment>> slotAssignments = {};
 
 	//represents drift offset for filled slots
 	Static driftOffset;
