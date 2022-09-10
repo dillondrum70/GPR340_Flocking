@@ -10,10 +10,10 @@ void FormationManager::UpdateSlotAssignments()
 {
 	for (int i = 0; i < slotAssignments.size(); i++)
 	{
-		slotAssignments[i].slotNumber = i;
+		slotAssignments[i]->slotNumber = i;
 	}
 
-	driftOffset = pattern.GetDriftOffset(slotAssignments);
+	driftOffset = pattern->GetDriftOffset(slotAssignments);
 }
 
 //add boid to slot, return false if all slots full
@@ -21,7 +21,7 @@ bool FormationManager::AddBoid(Boid* boid)
 {
 	int occupiedSlots = slotAssignments.size();
 
-	if (pattern.SupportsSlots(occupiedSlots + 1))
+	if (pattern->SupportsSlots(occupiedSlots + 1))
 	{
 		//remove boid from current formation
 		int currentForm = boid->getFormationID();
@@ -30,8 +30,8 @@ bool FormationManager::AddBoid(Boid* boid)
 			this->world->formations[currentForm]->RemoveBoid(boid);
 		}
 
-		SlotAssignment newAssignment = SlotAssignment();
-		newAssignment.boid = boid;
+		std::shared_ptr<SlotAssignment> newAssignment = std::make_shared<SlotAssignment>();
+		newAssignment->boid = boid;
 		slotAssignments.push_back(newAssignment);
 		UpdateSlotAssignments();
 		return true;
@@ -45,7 +45,7 @@ void FormationManager::RemoveBoid(Boid* boid)
 {
 	for (int i = 0; i < slotAssignments.size(); i++)
 	{
-		if (slotAssignments[i].boid == boid)
+		if (slotAssignments[i]->boid == boid)
 		{
 			slotAssignments.erase(slotAssignments.begin() + i);
 			break;
@@ -62,8 +62,8 @@ void FormationManager::UpdateSlots()
 	
 	for (int i = 0; i < slotCount; i++)
 	{
-		int slotNumber = slotAssignments[i].slotNumber;
-		Static slot = pattern.GetSlotLocation(slotNumber, slotCount);
+		int slotNumber = slotAssignments[i]->slotNumber;
+		Static slot = pattern->GetSlotLocation(slotNumber, slotCount);
 
 		Static location;
 		float xOffset = (slot.position.x * std::cos(anchor.orientation)) - (slot.position.y * std::sin(anchor.orientation));
@@ -74,7 +74,7 @@ void FormationManager::UpdateSlots()
 		location.position -= driftOffset.position;
 		location.orientation -= driftOffset.orientation;
 
-		slotAssignments[i].boid->target = location;
+		slotAssignments[i]->boid->target = location;
 
 	}
 }
@@ -85,15 +85,15 @@ Static FormationManager::GetAnchorPoint()
 	Static result;
 	int count = 0;
 
-	for (SlotAssignment a : slotAssignments)
+	for (int i = 0; i < slotAssignments.size(); i++)
 	{
 		count++;
 
 		//sum positions
-		result.position += a.boid->getPosition();
+		result.position += slotAssignments[i]->boid->getPosition();
 
 		//sum the atan of the velocity to get the sum of orientations
-		Vector2 dir = a.boid->getVelocity();
+		Vector2 dir = slotAssignments[i]->boid->getVelocity();
 		result.orientation += std::atan2(dir.x, dir.y);
 	}
 

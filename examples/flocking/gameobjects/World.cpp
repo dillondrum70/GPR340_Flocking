@@ -214,7 +214,7 @@ void World::drawRulesUI() {
 
 void World::Update(float deltaTime) {
     //move formations
-    for (std::unique_ptr<FormationManager>& form : formations)
+    for (std::shared_ptr<FormationManager>& form : formations)
     {
         form->UpdateSlots();
     }

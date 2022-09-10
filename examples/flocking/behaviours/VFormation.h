@@ -35,7 +35,7 @@ class VFormation : public FormationPattern
     int calculateNumberOfSlots(std::vector<SlotAssignment> slotAssignments);
 
     //drift offset when characters are in the set of slots
-    Static GetDriftOffset(std::vector<SlotAssignment> slotAssignments) override;
+    Static GetDriftOffset(std::vector<std::shared_ptr<SlotAssignment>> slotAssignments) override;
 
     //return location of a slot index
     Static GetSlotLocation(int slotNumber, int totalSlots) override;

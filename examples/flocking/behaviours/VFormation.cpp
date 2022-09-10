@@ -36,12 +36,13 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
 
             if (closeForm < 0) //create new formation
             {
-                this->world->formations.push_back(std::make_unique<FormationManager>(this->world, VFormation()));
+                std::shared_ptr<FormationManager> manager = std::make_shared<FormationManager>(this->world, std::make_shared<VFormation>());
+                this->world->formations.push_back(std::move(manager));
                 boid->setFormationID(this->world->formations.size());
             }
             else if(closeForm != currentID) //if IDs don't match, add boid to new formation
             {
-                this->world->formations[closeForm].get()->AddBoid(boid);
+                this->world->formations[closeForm]->AddBoid(boid);
             }
             //else, closest formation is the formation the boid is currently in, do nothing
         }
@@ -72,12 +73,12 @@ int VFormation::calculateNumberOfSlots(std::vector<SlotAssignment> slotAssignmen
 }
 
 //drift offset when characters are in the set of slots
-Static VFormation::GetDriftOffset(std::vector<SlotAssignment> slotAssignments)
+Static VFormation::GetDriftOffset(std::vector<std::shared_ptr<SlotAssignment>> slotAssignments)
 {
     Static result;
-    for (SlotAssignment assign : slotAssignments)
+    for (int i = 0; i < slotAssignments.size(); i++)
     {
-        Static location = GetSlotLocation(assign.slotNumber, slotAssignments.size());
+        Static location = GetSlotLocation(slotAssignments[i]->slotNumber, slotAssignments.size());
         result.position += location.position;
         result.orientation += location.orientation;
     }

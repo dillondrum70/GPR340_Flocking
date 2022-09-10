@@ -21,7 +21,7 @@ public:
 	float minDistance = 15.f;
 
 	//drift offset when characters are in the set of slots
-	virtual Static GetDriftOffset(std::vector<SlotAssignment> slotAssignments) = 0;
+	virtual Static GetDriftOffset(std::vector<std::shared_ptr<SlotAssignment>> slotAssignments) = 0;
 
 	//return location of a slot index
 	virtual Static GetSlotLocation(int slotNumber, int totalSlots) = 0;

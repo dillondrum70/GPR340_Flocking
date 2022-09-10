@@ -12,20 +12,20 @@ public:
 	World* world;
 
 	FormationManager(World* worldVal) { world = worldVal; }; //VFormation will be default
-	FormationManager(World* worldVal, FormationPattern& initialPattern) 
+	FormationManager(World* worldVal, std::shared_ptr<FormationPattern> initialPattern) 
 	{
 		world = worldVal;
 		pattern = initialPattern;
 	};
 
 	//stores boids and slots they are assigned to
-	std::vector<SlotAssignment> slotAssignments;
+	std::vector<std::shared_ptr<SlotAssignment>> slotAssignments;
 
 	//represents drift offset for filled slots
 	Static driftOffset;
 
 	//pattern used
-	FormationPattern& pattern = VFormation(); //VFormation will be default
+	std::shared_ptr<FormationPattern> pattern = std::make_shared<VFormation>(); //VFormation will be default
 
 	//update assignment of characters to slots
 	void UpdateSlotAssignments();
