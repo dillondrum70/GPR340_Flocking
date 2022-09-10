@@ -37,6 +37,8 @@ public:
     //Constructor
     explicit Boid(Engine *pEngine, World* pWorld);
 
+    ~Boid();
+
     //Getter - Setters
     void setFlockingRules(std::vector<std::unique_ptr<FlockingRule>> const& newRules) {
         rules.clear();

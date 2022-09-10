@@ -9,7 +9,8 @@ class Particle : public GameObject {
 private:
     //Members
     bool hasConstantSpeed = false;
-    float speed = 120.;
+    float speed = 0.;
+    float maxSpeed = 120.;
     float maxAcceleration = 10.;
     float circleSize; // todo: is this really needed?
 
@@ -39,6 +40,10 @@ public:
 
     Vector2 getVelocity() const {
         return velocity;
+    }
+
+    float getMaxSpeed() const {
+        return maxSpeed;
     }
 
     void setPosition(Vector2 position) {

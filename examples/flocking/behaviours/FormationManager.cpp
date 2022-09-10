@@ -13,7 +13,10 @@ void FormationManager::UpdateSlotAssignments()
 		slotAssignments[i]->slotNumber = i;
 	}
 	
-	driftOffset = pattern->GetDriftOffset(slotAssignments);
+	if (!slotAssignments.empty())
+	{
+		driftOffset = pattern->GetDriftOffset(slotAssignments);
+	}
 }
 
 //add boid to slot, return false if all slots full
@@ -30,6 +33,9 @@ bool FormationManager::AddBoid(Boid* boid)
 			this->world->formations[currentForm]->RemoveBoid(boid);
 		}
 
+
+		boid->setFormationID(id);
+
 		SlotAssignment* newAssignment = new SlotAssignment();
 		newAssignment->boid = boid;
 		slotAssignments.push_back(newAssignment);
@@ -45,12 +51,22 @@ void FormationManager::RemoveBoid(Boid* boid)
 {
 	for (int i = 0; i < slotAssignments.size(); i++)
 	{
-		if (slotAssignments[i]->boid == boid)
+		if (slotAssignments[i]->boid)
+		{
+			if (boid && slotAssignments[i]->boid == boid)
+			{
+				slotAssignments.erase(slotAssignments.begin() + i);
+				break;
+			}
+		}
+		else
 		{
 			slotAssignments.erase(slotAssignments.begin() + i);
-			break;
 		}
+		
 	}
+
+	UpdateSlotAssignments();
 }
 
 //send new target locations to boids
@@ -69,6 +85,8 @@ void FormationManager::UpdateSlots()
 		float xOffset = (slot.position.x * std::cos(anchor.orientation)) - (slot.position.y * std::sin(anchor.orientation));
 		float yOffset = (slot.position.x * std::sin(anchor.orientation)) + (slot.position.y * std::cos(anchor.orientation));
 		location.position = anchor.position + Vector2(xOffset, yOffset);
+		//location.position = anchor.position + slot.position;
+
 		location.orientation = anchor.orientation + slot.orientation;
 
 		location.position -= driftOffset.position;
@@ -85,21 +103,22 @@ Static FormationManager::GetAnchorPoint()
 	Static result;
 	int count = 0;
 
-	for (int i = 0; i < slotAssignments.size(); i++)
+	for (count = 0; count < slotAssignments.size(); count++)
 	{
-		count++;
-
 		//sum positions
-		result.position += slotAssignments[i]->boid->getPosition();
+		result.position += slotAssignments[count]->boid->getPosition();
 
 		//sum the atan of the velocity to get the sum of orientations
-		Vector2 dir = slotAssignments[i]->boid->getVelocity();
-		result.orientation += std::atan2(dir.x, dir.y);
+		Vector2 dir = slotAssignments[count]->boid->transform.rotation;
+		result.orientation += dir.getAngleRadian();
 	}
 
-	result.position /= count; //average the positions to get the center like with cohesion
+	if (count != 0)
+	{
+		result.position /= count; //average the positions to get the center like with cohesion
 
-	result.orientation /= count; //average the orientations
+		result.orientation /= count; //average the orientations
+	}
 
 	return result;
 }

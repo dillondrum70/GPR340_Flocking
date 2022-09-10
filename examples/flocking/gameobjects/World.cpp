@@ -213,10 +213,18 @@ void World::drawRulesUI() {
 }
 
 void World::Update(float deltaTime) {
-    //move formations
-    for (FormationManager* form : formations)
+    //move formations and delete empty formations
+    for (int i = formations.size() - 1; i >= 0; i--)
     {
-        form->UpdateSlots();
+        if (formations[i]->slotAssignments.empty())
+        {
+            delete formations[i];
+            formations.erase(formations.begin() + i);
+        }
+        else
+        {
+            formations[i]->UpdateSlots();
+        }
     }
 
     // move the first boid
@@ -230,6 +238,39 @@ void World::Update(float deltaTime) {
     // update positions
     for (auto& b : boids)
         warpParticleIfOutOfBounds(b);
+
+    //draw formation positions
+    if (showRules)
+    {
+        SDL_Renderer* sdlRenderer = engine->window->sdlRenderer;
+
+        for (FormationManager* manager : formations)
+        {
+            int total = manager->slotAssignments.size();
+            Static anchor = manager->GetAnchorPoint();
+
+            for (int i = 0; i < total; i++)
+            {
+                Vector2 pos = manager->pattern->GetSlotLocation(i, total).position;
+                float xPos = (pos.x * cos(anchor.orientation)) - (pos.y * sin(anchor.orientation));
+                float yPos = (pos.x * sin(anchor.orientation)) + (pos.y * cos(anchor.orientation));
+                Vector2 position = anchor.position + Vector2(xPos, yPos);
+                
+                if (sdlRenderer)
+                {
+                    Polygon::DrawLine(sdlRenderer,
+                        position,
+                        position,
+                        Vector3::Yellow());
+                }
+            }
+
+            Polygon::DrawLine(sdlRenderer,
+                anchor.position,
+                anchor.position,
+                Vector3::Red());
+        }
+    }
 }
 
 int World::getNbBoids() const {

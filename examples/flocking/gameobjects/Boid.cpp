@@ -1,5 +1,6 @@
 #include "Boid.h"
 #include "World.h"
+#include "../behaviours/FormationManager.h"
 
 std::vector<Boid*> Boid::computeBoidNeighborhood() {
     std::vector<Boid*> neighborhood;
@@ -26,6 +27,14 @@ std::vector<Boid*> Boid::computeBoidNeighborhood() {
 
 
 Boid::Boid(Engine *pEngine, World *pWorld) : Particle(pEngine), world(pWorld) {}
+
+Boid::~Boid()
+{
+    if (formationID >= 0)
+    {
+        world->formations[formationID]->RemoveBoid(this);
+    }
+}
 
 void Boid::Update(float deltaTime) {
     Particle::Update(deltaTime);

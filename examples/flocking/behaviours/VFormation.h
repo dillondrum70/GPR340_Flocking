@@ -7,6 +7,9 @@
 /* Steer toward average heading of local flockmates */
 class VFormationRule : public FlockingRule {
 public:
+    //int targetDist = 5; //try to be within 5 pixels of target
+    int slowDist = 10; //slow down within 10 pixels of target
+
     explicit VFormationRule(World* pWorld, float weight = 1., bool isEnabled = true) : FlockingRule(pWorld, Vector3::Yellow(), weight, isEnabled) {}
 
     std::unique_ptr<FlockingRule> clone() override {
@@ -30,7 +33,7 @@ public:
 
 class VFormation : public FormationPattern
 {
-    int maxSlotNumber = 29;
+    int maxSlotNumber = 28;
 
     int calculateNumberOfSlots(std::vector<SlotAssignment*> slotAssignments);
 

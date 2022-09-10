@@ -11,15 +11,19 @@ public:
 
 	World* world;
 
-	FormationManager(World* worldVal) 
+	int id = -1;
+
+	FormationManager(World* worldVal, int idVal) 
 	{ 
 		world = worldVal; 
 		pattern = new VFormation();
+		id = idVal;
 	}; //VFormation will be default
-	FormationManager(World* worldVal, FormationPattern* initialPattern) 
+	FormationManager(World* worldVal, FormationPattern* initialPattern, int idVal) 
 	{
 		world = worldVal;
 		pattern = initialPattern;
+		id = idVal;
 	};
 
 	~FormationManager() { ClearSlots(); }
@@ -48,6 +52,8 @@ public:
 
 	//pattern used
 	FormationPattern* pattern = nullptr; //VFormation will be default
+
+	int GetID() { return id; }
 
 	//update assignment of characters to slots
 	void UpdateSlotAssignments();
