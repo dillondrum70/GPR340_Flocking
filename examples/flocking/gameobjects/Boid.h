@@ -9,7 +9,7 @@ class World;
 
 struct Static {
     Vector2 position;
-    float orientation;
+    float orientation = 0;
 };
 
 class Boid : public Particle {

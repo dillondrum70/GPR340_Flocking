@@ -12,7 +12,7 @@ void FormationManager::UpdateSlotAssignments()
 	{
 		slotAssignments[i]->slotNumber = i;
 	}
-
+	
 	driftOffset = pattern->GetDriftOffset(slotAssignments);
 }
 
@@ -30,7 +30,7 @@ bool FormationManager::AddBoid(Boid* boid)
 			this->world->formations[currentForm]->RemoveBoid(boid);
 		}
 
-		std::shared_ptr<SlotAssignment> newAssignment = std::make_shared<SlotAssignment>();
+		SlotAssignment* newAssignment = new SlotAssignment();
 		newAssignment->boid = boid;
 		slotAssignments.push_back(newAssignment);
 		UpdateSlotAssignments();

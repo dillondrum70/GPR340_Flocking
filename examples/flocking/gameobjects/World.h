@@ -39,6 +39,18 @@ private:
     /// METHODS
     void initializeRules();
 
+    ~World() { ClearFormations(); }
+
+    void ClearFormations()
+    {
+        for (FormationManager* form : formations)
+        {
+            delete form;
+        }
+
+        formations.clear();
+    }
+
     //Boids
 
     void applyFlockingRulesToAllBoids();
@@ -53,7 +65,7 @@ public:
     std::vector<Boid*> boids;
 
     //formations
-    std::vector<std::shared_ptr<FormationManager>> formations;
+    std::vector<FormationManager*> formations;
 
     /// METHODS
     explicit World(Engine* pEngine);

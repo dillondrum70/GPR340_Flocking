@@ -11,21 +11,43 @@ public:
 
 	World* world;
 
-	FormationManager(World* worldVal) { world = worldVal; }; //VFormation will be default
-	FormationManager(World* worldVal, std::shared_ptr<FormationPattern> initialPattern) 
+	FormationManager(World* worldVal) 
+	{ 
+		world = worldVal; 
+		pattern = new VFormation();
+	}; //VFormation will be default
+	FormationManager(World* worldVal, FormationPattern* initialPattern) 
 	{
 		world = worldVal;
 		pattern = initialPattern;
 	};
 
+	~FormationManager() { ClearSlots(); }
+
+	void ClearSlots()
+	{
+		for (SlotAssignment* slot : slotAssignments)
+		{
+			delete slot;
+		}
+
+		slotAssignments.clear();
+
+		if (pattern)
+		{
+			delete pattern;
+			pattern = nullptr;
+		}
+	}
+
 	//stores boids and slots they are assigned to
-	std::vector<std::shared_ptr<SlotAssignment>> slotAssignments = {};
+	std::vector<SlotAssignment*> slotAssignments;
 
 	//represents drift offset for filled slots
 	Static driftOffset;
 
 	//pattern used
-	std::shared_ptr<FormationPattern> pattern = std::make_shared<VFormation>(); //VFormation will be default
+	FormationPattern* pattern = nullptr; //VFormation will be default
 
 	//update assignment of characters to slots
 	void UpdateSlotAssignments();

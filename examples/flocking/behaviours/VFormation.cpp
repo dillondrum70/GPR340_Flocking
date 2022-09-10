@@ -36,10 +36,9 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
 
             if (closeForm < 0) //create new formation
             {
-                std::shared_ptr<FormationManager> manager = std::make_shared<FormationManager>(this->world, std::make_shared<VFormation>());
-                this->world->formations.push_back(std::move(manager));
+                this->world->formations.push_back(new FormationManager(this->world, new VFormation()));
 
-                this->world->formations[closeForm]->AddBoid(boid);
+                this->world->formations[this->world->formations.size() - 1]->AddBoid(boid);
                 boid->setFormationID(this->world->formations.size());
             }
             else if(closeForm != currentID) //if IDs don't match, add boid to new formation
@@ -59,15 +58,15 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
     return FormationForce;
 }
 
-int VFormation::calculateNumberOfSlots(std::vector<SlotAssignment> slotAssignments)
+int VFormation::calculateNumberOfSlots(std::vector<SlotAssignment*> slotAssignments)
 {
     int filledSlots = 0;
 
-    for (SlotAssignment assign : slotAssignments)
+    for (SlotAssignment* assign : slotAssignments)
     {
-        if (assign.slotNumber >= maxSlotNumber)
+        if (assign->slotNumber >= maxSlotNumber)
         {
-            filledSlots = assign.slotNumber;
+            filledSlots = assign->slotNumber;
         }
     }
 
@@ -75,7 +74,7 @@ int VFormation::calculateNumberOfSlots(std::vector<SlotAssignment> slotAssignmen
 }
 
 //drift offset when characters are in the set of slots
-Static VFormation::GetDriftOffset(std::vector<std::shared_ptr<SlotAssignment>> slotAssignments)
+Static VFormation::GetDriftOffset(std::vector<SlotAssignment*> slotAssignments)
 {
     Static result;
     for (int i = 0; i < slotAssignments.size(); i++)
