@@ -89,12 +89,18 @@ void FormationManager::UpdateSlots()
 		Static slot = pattern->GetSlotLocation(slotNumber, slotCount);
 
 		Static location;
-		float xOffset = (slot.position.x * std::cos(anchor.orientation)) - (slot.position.y * std::sin(anchor.orientation));
-		float yOffset = (slot.position.x * std::sin(anchor.orientation)) + (slot.position.y * std::cos(anchor.orientation));
-		location.position = anchor.position + Vector2(xOffset, yOffset);
-		//location.position = anchor.position + slot.position; //unrotated
+		//float xOffset = (slot.position.x * std::cos(anchor.orientation)) - (slot.position.y * std::sin(anchor.orientation));
+		//float yOffset = (slot.position.x * std::sin(anchor.orientation)) + (slot.position.y * std::cos(anchor.orientation));
+		//location.position = anchor.position + Vector2(xOffset, yOffset);
 
-		location.orientation = anchor.orientation + slot.orientation;
+		//float xOffset = ((slot.position.x - anchor.position.x) * std::cos(anchor.orientation)) - ((anchor.position.y - slot.position.y) * std::sin(anchor.orientation)) + anchor.position.x;
+		//float yOffset = anchor.position.y - ((slot.position.x - anchor.position.x) * std::sin(anchor.orientation)) + ((anchor.position.y - slot.position.y) * std::cos(anchor.orientation));
+		//location.position = anchor.position; //if anchor position is applied in offset calculations
+
+		location.position = anchor.position + slot.position; //unrotated
+		
+
+		location.orientation = anchor.orientation + slot.orientation;  //for vformation, probably wont do anything.  slot should return 0 for orientation
 
 		location.position -= driftOffset.position;
 		location.orientation -= driftOffset.orientation;

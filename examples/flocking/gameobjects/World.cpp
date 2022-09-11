@@ -254,9 +254,16 @@ void World::Update(float deltaTime) {
             for (int i = 0; i < total; i++)
             {
                 Vector2 pos = manager->pattern->GetSlotLocation(i, total).position;
+
                 float xPos = (pos.x * cos(anchor.orientation)) - (pos.y * sin(anchor.orientation));
                 float yPos = (pos.x * sin(anchor.orientation)) + (pos.y * cos(anchor.orientation));
                 Vector2 position = anchor.position + Vector2(xPos, yPos);
+
+                //float xPos = ((pos.x - anchor.position.x) * cos(anchor.orientation)) - ((anchor.position.y - pos.y) * sin(anchor.orientation)) + anchor.position.x;
+                //float yPos = anchor.position.y - ((pos.x - anchor.position.x) * sin(anchor.orientation)) + ((anchor.position.y - pos.y) * cos(anchor.orientation));
+                //Vector2 position = Vector2(xPos, yPos);
+
+                //Vector2 position = anchor.position + manager->pattern->GetSlotLocation(i, total).position;
                 
                 if (sdlRenderer)
                 {
