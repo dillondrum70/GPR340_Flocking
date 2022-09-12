@@ -94,7 +94,7 @@ int VFormation::calculateNumberOfSlots(std::vector<SlotAssignment*> slotAssignme
 Static VFormation::GetDriftOffset(std::vector<SlotAssignment*> slotAssignments)
 {
     Static result;
-    for (int i = 0; i < slotAssignments.size(); i++)
+    /*for (int i = 0; i < slotAssignments.size(); i++)
     {
         Static location = GetSlotLocation(slotAssignments[i]->slotNumber, slotAssignments.size());
         result.position += location.position;
@@ -103,7 +103,12 @@ Static VFormation::GetDriftOffset(std::vector<SlotAssignment*> slotAssignments)
 
     int totalAssignments = slotAssignments.size();
     result.position /= totalAssignments;
-    result.orientation /= totalAssignments;
+    result.orientation /= totalAssignments;*/
+
+    ////////////////////
+    result.position = slotAssignments[0]->boid->getVelocity().normalized() * 5;
+    result.orientation = slotAssignments[0]->boid->transform.rotation.getAngleRadian();
+    ///////////////////
 
     return result;
 }
@@ -111,7 +116,7 @@ Static VFormation::GetDriftOffset(std::vector<SlotAssignment*> slotAssignments)
 //return location of a slot index relative to center of mass
 Static VFormation::GetSlotLocation(int slotNumber, int totalSlots)
 {
-    Static result;
+    Static result = Static();
     int row = NextTriangularRoot(slotNumber); //doubles as both the row and the number of slots in the row
 
     //uses sum of first n natural numbers equation
@@ -121,25 +126,31 @@ Static VFormation::GetSlotLocation(int slotNumber, int totalSlots)
     float middleRow = NextTriangularRoot(totalSlots - 1) / 2.;
     //center is in the middle of the formation, not the front
     //calculate y position relative to center of formation
-    if (row > middleRow)
+    /*if (row > middleRow)
     {
         result.position.y = (row - middleRow) * minDistance; //negative relative to the center
     }
     else
     {
         result.position.y = -1 * (middleRow - row) * minDistance; //positive relative to the center of the formation
-    }
+    }*/
     
-    //calculate x position relative to center of formation
-    float middleOfRow = (row + 1) / 2.;
-    if (rowPos < middleOfRow)
+    //calculate center row position relative to center of formation
+    float middleOfRow = (row / 2.) - .5f;
+    //float middleOfRow = (row + 1) / 2.;
+    /*if (rowPos < middleOfRow)
     {
         result.position.x = -1 * (middleOfRow - rowPos) * minDistance;
     }
     else
     {
         result.position.x = (rowPos - middleOfRow) * minDistance;
-    }
+    }*/
+    result.position.x = (rowPos - middleOfRow) * minDistance;
+    ///////////////////////////////
+    result.position.y = (row - 1) * minDistance; //negative relative to the center
+    //result.position.x = (rowPos - middleOfRow) * minDistance;
+    /// ////////////////////////////
 
     result.orientation = 0;
 

@@ -82,12 +82,6 @@ void FormationManager::UpdateSlots()
 	Static anchor = GetAnchorPoint();
 
 	int slotCount = slotAssignments.size();
-
-	//this is the only way to make the rule display accurate.  Otherwise, the anchor point is different by the time rules are drawn
-	if (world->getShowRules())
-	{
-		Polygon::DrawLine(world->engine->window->sdlRenderer, anchor.position, anchor.position, Vector3::Red());
-	}
 	
 	
 	for (int i = 0; i < slotCount; i++)
@@ -122,6 +116,12 @@ void FormationManager::UpdateSlots()
 			Polygon::DrawLine(world->engine->window->sdlRenderer, location.position, location.position, Vector3::Yellow());
 		}
 	}
+
+	//this is the only way to make the rule display accurate.  Otherwise, the anchor point is different by the time rules are drawn
+	if (world->getShowRules())
+	{
+		Polygon::DrawLine(world->engine->window->sdlRenderer, anchor.position, anchor.position + (Vector2::getVector2FromRadian(anchor.orientation - (3.14 / 2.f)) * 50), Vector3::Green());
+	}
 }
 
 //the first position in formation
@@ -130,7 +130,7 @@ Static FormationManager::GetAnchorPoint()
 	Static result;
 	int count = 0;
 
-	for (count = 0; count < slotAssignments.size(); count++)
+	/*for (count = 0; count < slotAssignments.size(); count++)
 	{
 		//sum positions
 		result.position += slotAssignments[count]->boid->getPosition();
@@ -145,7 +145,14 @@ Static FormationManager::GetAnchorPoint()
 		result.position /= count; //average the positions to get the center like with cohesion
 
 		result.orientation /= count; //average the orientations
-	}
+	}*/
+	///////////////////////////
+	//sum positions
+	result.position = slotAssignments[0]->boid->getPosition();
 
+	//sum the atan of the velocity to get the sum of orientations
+	Vector2 dir = slotAssignments[0]->boid->transform.rotation;
+	result.orientation = dir.getAngleRadian();
+	///////////////////////////
 	return result;
 }
