@@ -123,11 +123,11 @@ Static VFormation::GetSlotLocation(int slotNumber, int totalSlots)
     //calculate y position relative to center of formation
     if (row > middleRow)
     {
-        result.position.y = -1 * (row - middleRow) * minDistance; //negative relative to the center
+        result.position.y = (row - middleRow) * minDistance; //negative relative to the center
     }
     else
     {
-        result.position.y = (middleRow - row) * minDistance; //positive relative to the center of the formation
+        result.position.y = -1 * (middleRow - row) * minDistance; //positive relative to the center of the formation
     }
     
     //calculate x position relative to center of formation

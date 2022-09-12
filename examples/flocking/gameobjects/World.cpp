@@ -229,20 +229,8 @@ void World::Update(float deltaTime) {
         }
     }
 
-    // move the first boid
-    if (engine->getInputArrow() != Vector2::zero() && getNbBoids() > 0) {
-        Boid* firstBoid = *getAllBoids()->begin();
-        firstBoid->applyForce(engine->getInputArrow() * 20.f);
-        firstBoid->drawDebugRadius = true;
-        firstBoid->circleColor = Vector3::Red();
-    }
-
-    // update positions
-    for (auto& b : boids)
-        warpParticleIfOutOfBounds(b);
-
     //draw formation positions
-    if (showRules)
+    /*if (showRules)
     {
         SDL_Renderer* sdlRenderer = engine->window->sdlRenderer;
 
@@ -264,7 +252,7 @@ void World::Update(float deltaTime) {
                 //Vector2 position = Vector2(xPos, yPos);
 
                 //Vector2 position = anchor.position + manager->pattern->GetSlotLocation(i, total).position;
-                
+
                 if (sdlRenderer)
                 {
                     Polygon::DrawLine(sdlRenderer,
@@ -279,7 +267,19 @@ void World::Update(float deltaTime) {
                 anchor.position,
                 Vector3::Red());
         }
+    }*/
+
+    // move the first boid
+    if (engine->getInputArrow() != Vector2::zero() && getNbBoids() > 0) {
+        Boid* firstBoid = *getAllBoids()->begin();
+        firstBoid->applyForce(engine->getInputArrow() * 20.f);
+        firstBoid->drawDebugRadius = true;
+        firstBoid->circleColor = Vector3::Red();
     }
+
+    // update positions
+    for (auto& b : boids)
+        warpParticleIfOutOfBounds(b);
 }
 
 void World::UpdateFormationIDs()

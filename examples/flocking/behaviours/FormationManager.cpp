@@ -82,22 +82,30 @@ void FormationManager::UpdateSlots()
 	Static anchor = GetAnchorPoint();
 
 	int slotCount = slotAssignments.size();
+
+	//this is the only way to make the rule display accurate.  Otherwise, the anchor point is different by the time rules are drawn
+	if (world->getShowRules())
+	{
+		Polygon::DrawLine(world->engine->window->sdlRenderer, anchor.position, anchor.position, Vector3::Red());
+	}
+	
 	
 	for (int i = 0; i < slotCount; i++)
 	{
 		int slotNumber = slotAssignments[i]->slotNumber;
 		Static slot = pattern->GetSlotLocation(slotNumber, slotCount);
 
+		//rotate and the slot position about the anchor point
 		Static location;
-		//float xOffset = (slot.position.x * std::cos(anchor.orientation)) - (slot.position.y * std::sin(anchor.orientation));
-		//float yOffset = (slot.position.x * std::sin(anchor.orientation)) + (slot.position.y * std::cos(anchor.orientation));
-		//location.position = anchor.position + Vector2(xOffset, yOffset);
+		float xOffset = (slot.position.x * std::cos(anchor.orientation)) - (slot.position.y * std::sin(anchor.orientation));
+		float yOffset = (slot.position.x * std::sin(anchor.orientation)) + (slot.position.y * std::cos(anchor.orientation));
+		location.position = anchor.position + Vector2(xOffset, yOffset);
 
 		//float xOffset = ((slot.position.x - anchor.position.x) * std::cos(anchor.orientation)) - ((anchor.position.y - slot.position.y) * std::sin(anchor.orientation)) + anchor.position.x;
 		//float yOffset = anchor.position.y - ((slot.position.x - anchor.position.x) * std::sin(anchor.orientation)) + ((anchor.position.y - slot.position.y) * std::cos(anchor.orientation));
 		//location.position = anchor.position; //if anchor position is applied in offset calculations
 
-		location.position = anchor.position + slot.position; //unrotated
+		//location.position = anchor.position + slot.position; //unrotated
 		
 
 		location.orientation = anchor.orientation + slot.orientation;  //for vformation, probably wont do anything.  slot should return 0 for orientation
@@ -105,8 +113,14 @@ void FormationManager::UpdateSlots()
 		location.position -= driftOffset.position;
 		location.orientation -= driftOffset.orientation;
 
+		//set boid target, boid will move towards that target
 		slotAssignments[i]->boid->target = location;
 
+		//this is the only way to make the rule display accurate.  Otherwise, the anchor point is different by the time rules are drawn
+		if (world->getShowRules())
+		{
+			Polygon::DrawLine(world->engine->window->sdlRenderer, location.position, location.position, Vector3::Yellow());
+		}
 	}
 }
 

@@ -75,6 +75,8 @@ public:
 
     int getNbBoids() const;
 
+    bool getShowRules() { return showRules; }
+
     /// Setters
 
     //ImGui
