@@ -29,11 +29,13 @@ public:
     }
 
     Vector2 computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) override;
+
+    bool drawImguiRuleExtra() override;
 };
 
 class VFormation : public FormationPattern
 {
-    int maxSlotNumber = 28;
+    int maxSlotNumber = 36;
 
     int calculateNumberOfSlots(std::vector<SlotAssignment*> slotAssignments);
 

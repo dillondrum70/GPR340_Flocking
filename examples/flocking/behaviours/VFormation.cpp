@@ -146,6 +146,17 @@ Static VFormation::GetSlotLocation(int slotNumber, int totalSlots)
     return result;
 }
 
+bool VFormationRule::drawImguiRuleExtra() {
+    ImGui::SetCurrentContext(world->engine->imGuiContext);
+    bool valusHasChanged = false;
+
+    if (ImGui::DragInt("Slow Distance", &slowDist, 0.05f)) {
+        valusHasChanged = true;
+    }
+
+    return valusHasChanged;
+}
+
 //can pattern support <slotCount> slots?
 bool VFormation::SupportsSlots(int slotCount)
 {
