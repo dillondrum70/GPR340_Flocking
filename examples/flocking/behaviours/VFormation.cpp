@@ -3,8 +3,16 @@
 #include "../gameobjects/Boid.h"
 #include "../gameobjects/World.h"
 
+#include <algorithm>
+
 Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) {
     Vector2 FormationForce;
+
+    //Ugly, I know, but so is half this implementation
+    for (FormationManager* form : this->world->formations)
+    {
+        form->pattern->slowDist = slowDist;
+    }
     
     //join new formation or stay in current
     if (!neighborhood.empty())
@@ -37,7 +45,7 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
                 //remove from old formation if not close
                 if (currentID >= 0)
                 {
-                    this->world->formations[currentID]->RemoveBoid(boid);
+                    formations[currentID]->RemoveBoid(boid);
                 }
 
                 int index = formations.size();
@@ -45,7 +53,7 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
 
                 formations[index]->AddBoid(boid);
             }
-            else if(closeForm != currentID) //if IDs don't match, add boid to new formation
+            else if (closeForm != currentID) //if IDs don't match, add boid to new formation
             {
                 formations[closeForm]->AddBoid(boid);
             }
@@ -58,9 +66,13 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
             Vector2 displacement = boid->target.position - pos;
 
             FormationForce = displacement.normalized();
-            if (displacement.getMagnitude() < slowDist) //boids slow down as they get close to target, allows others to catch up
+
+            //boids slow down as they get close to target, allows others to catch up
+            if (displacement.getMagnitude() < slowDist)
             {
-                boid->setSpeed(boid->getMaxSpeed() * (displacement.getMagnitude() / slowDist));
+                float slowFactor = (displacement.getMagnitude() / slowDist);
+                slowFactor = std::clamp(slowFactor, .5f, 1.f);
+                boid->setSpeed(boid->getMaxSpeed() * slowFactor);
             }
             else
             {
@@ -105,6 +117,8 @@ Static VFormation::GetDriftOffset(std::vector<SlotAssignment*> slotAssignments)
     result.position /= totalAssignments;
     result.orientation /= totalAssignments;
 
+    result.position += Vector2::getVector2FromRadian(result.orientation) * slowDist;
+
     return result;
 }
 
@@ -119,27 +133,16 @@ Static VFormation::GetSlotLocation(int slotNumber, int totalSlots)
     int rowPos = slotNumber - ((row - 1) * (row) * .5); 
 
     float middleRow = NextTriangularRoot(totalSlots - 1) / 2.;
+
     //center is in the middle of the formation, not the front
     //calculate y position relative to center of formation
-    if (row > middleRow)
-    {
-        result.position.y = (row - middleRow) * minDistance; //negative relative to the center
-    }
-    else
-    {
-        result.position.y = -1 * (middleRow - row) * minDistance; //positive relative to the center of the formation
-    }
+    result.position.y = (row - middleRow) * minDistance;
     
-    //calculate x position relative to center of formation
-    float middleOfRow = (row + 1) / 2.;
-    if (rowPos < middleOfRow)
-    {
-        result.position.x = -1 * (middleOfRow - rowPos) * minDistance;
-    }
-    else
-    {
-        result.position.x = (rowPos - middleOfRow) * minDistance;
-    }
+    //calculate position in the middle of row
+    float middleOfRow = (row / 2.) - .5f;
+
+    //calculate x position relative to center of row
+    result.position.x = (rowPos - middleOfRow) * minDistance;
 
     result.orientation = 0;
 

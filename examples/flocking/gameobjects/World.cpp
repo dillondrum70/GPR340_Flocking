@@ -30,7 +30,7 @@ void World::initializeRules() {
     boidsRules.emplace_back(std::make_unique<MouseInfluenceRule>(this, 2.f));
     boidsRules.emplace_back(std::make_unique<BoundedAreaRule>(this, 20, 8.f, false));
     boidsRules.emplace_back(std::make_unique<WindRule>(this, 1.f, 6.f, false));
-    boidsRules.emplace_back(std::make_unique<VFormationRule>(this, 2.9f));
+    boidsRules.emplace_back(std::make_unique<VFormationRule>(this, 12.0f));
 
     //Starting weights are saved as defaults
     defaultWeights.clear();
@@ -78,6 +78,12 @@ void World::randomizeBoidPositionAndVelocity(Boid* boid) {
     // todo: give boid a transform to store position, rotation... etc
     boid->setPosition({Random::Range(0,size.x), Random::Range(0,size.y)});
     boid->setVelocity(Vector2::up().Rotate(Random::Range(0,360)) * desiredSpeed); //Random dir
+
+    for(FormationManager* form : formations)
+    {
+        form->ClearSlots();
+    }
+    formations.clear();
 }
 
 void World::warpParticleIfOutOfBounds(Particle* particle) {

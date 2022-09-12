@@ -63,10 +63,12 @@ void FormationManager::RemoveBoid(Boid* boid)
 		{
 			if (boid && slotAssignments[i]->boid == boid)
 			{
+				boid->setFormationID(-1);
+				delete slotAssignments[i];
 				slotAssignments.erase(slotAssignments.begin() + i);
 			}
 		}
-		else
+		else //if boid is garbage, erase it anyways
 		{
 			slotAssignments.erase(slotAssignments.begin() + i);
 		}
@@ -82,13 +84,6 @@ void FormationManager::UpdateSlots()
 	Static anchor = GetAnchorPoint();
 
 	int slotCount = slotAssignments.size();
-
-	//this is the only way to make the rule display accurate.  Otherwise, the anchor point is different by the time rules are drawn
-	if (world->getShowRules())
-	{
-		Polygon::DrawLine(world->engine->window->sdlRenderer, anchor.position, anchor.position, Vector3::Red());
-	}
-	
 	
 	for (int i = 0; i < slotCount; i++)
 	{
@@ -121,6 +116,12 @@ void FormationManager::UpdateSlots()
 		{
 			Polygon::DrawLine(world->engine->window->sdlRenderer, location.position, location.position, Vector3::Yellow());
 		}
+	}
+
+	//this is the only way to make the rule display accurate.  Otherwise, the anchor point is different by the time rules are drawn
+	if (world->getShowRules())
+	{
+		Polygon::DrawLine(world->engine->window->sdlRenderer, anchor.position, anchor.position + (Vector2::getVector2FromRadian(anchor.orientation - (3.14 / 2.f)) * 20), Vector3::Green());
 	}
 }
 

@@ -35,6 +35,8 @@ public:
 
 class VFormation : public FormationPattern
 {
+public:
+
     int maxSlotNumber = 36;
 
     int calculateNumberOfSlots(std::vector<SlotAssignment*> slotAssignments);
