@@ -32,8 +32,11 @@ public:
 	{
 		for (SlotAssignment* slot : slotAssignments)
 		{
-			slot->boid->setFormationID(-1); //clear formation info for boid
-			delete slot;
+			if (slot)
+			{
+				slot->boid->setFormationID(-1); //clear formation info for boid
+				delete slot;
+			}
 		}
 
 		slotAssignments.clear();

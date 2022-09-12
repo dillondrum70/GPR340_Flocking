@@ -41,6 +41,17 @@ void World::initializeRules() {
     SetupImGuiStyle();
 }
 
+void World::ClearFormations()
+{
+    for (FormationManager* form : formations)
+    {
+        form->ClearSlots();
+        delete form;
+    }
+
+    formations.clear();
+}
+
 void World::applyFlockingRulesToAllBoids() {
     for (const auto& boid : boids)
         boid->setFlockingRules(boidsRules);

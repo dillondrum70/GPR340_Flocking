@@ -41,15 +41,7 @@ private:
 
     ~World() { ClearFormations(); }
 
-    void ClearFormations()
-    {
-        for (FormationManager* form : formations)
-        {
-            delete form;
-        }
-
-        formations.clear();
-    }
+    void ClearFormations();
 
     //Boids
 

@@ -23,7 +23,10 @@ void FormationManager::UpdateIDs()
 {
 	for (SlotAssignment* slot : slotAssignments)
 	{
-		slot->boid->setFormationID(id);
+		if (slot && slot->boid)
+		{
+			slot->boid->setFormationID(id);
+		}
 	}
 }
 
@@ -32,7 +35,7 @@ bool FormationManager::AddBoid(Boid* boid)
 {
 	int occupiedSlots = slotAssignments.size();
 
-	if (pattern->SupportsSlots(occupiedSlots + 1))
+	if (boid && pattern->SupportsSlots(occupiedSlots + 1))
 	{
 		//remove boid from current formation
 		int currentForm = boid->getFormationID();
@@ -131,21 +134,37 @@ Static FormationManager::GetAnchorPoint()
 	Static result;
 	int count = 0;
 
+	int errors = 0;
+
 	for (count = 0; count < slotAssignments.size(); count++)
 	{
-		//sum positions
-		result.position += slotAssignments[count]->boid->getPosition();
+		if (slotAssignments[count])
+		{
+			if (slotAssignments[count]->boid)
+			{
+				//sum positions
+				result.position += slotAssignments[count]->boid->getPosition();
 
-		//sum the atan of the velocity to get the sum of orientations
-		Vector2 dir = slotAssignments[count]->boid->transform.rotation;
-		result.orientation += dir.getAngleRadian();
+				//sum the atan of the velocity to get the sum of orientations
+				Vector2 dir = slotAssignments[count]->boid->transform.rotation;
+				result.orientation += dir.getAngleRadian();
+			}
+			else
+			{
+				errors++;
+			}
+		}
+		else
+		{
+			errors++;
+		}
 	}
 
 	if (count != 0)
 	{
-		result.position /= count; //average the positions to get the center like with cohesion
+		result.position /= (count - errors); //average the positions to get the center like with cohesion
 
-		result.orientation /= count; //average the orientations
+		result.orientation /= (count - errors); //average the orientations
 	}
 
 	return result;
