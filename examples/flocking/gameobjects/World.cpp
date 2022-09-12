@@ -6,9 +6,12 @@
 #include "../behaviours/SeparationRule.h"
 #include "../behaviours/CohesionRule.h"
 #include "../behaviours/AlignmentRule.h"
+#include "../behaviours/VFormation.h"
 #include "../behaviours/MouseInfluenceRule.h"
 #include "../behaviours/BoundedAreaRule.h"
 #include "../behaviours/WindRule.h"
+
+#include "../behaviours/FormationManager.h"
 
 #if defined(_WIN32)
 #include "Windows.h"
@@ -27,6 +30,7 @@ void World::initializeRules() {
     boidsRules.emplace_back(std::make_unique<MouseInfluenceRule>(this, 2.f));
     boidsRules.emplace_back(std::make_unique<BoundedAreaRule>(this, 20, 8.f, false));
     boidsRules.emplace_back(std::make_unique<WindRule>(this, 1.f, 6.f, false));
+    boidsRules.emplace_back(std::make_unique<VFormationRule>(this, 2.9f));
 
     //Starting weights are saved as defaults
     defaultWeights.clear();
@@ -209,6 +213,22 @@ void World::drawRulesUI() {
 }
 
 void World::Update(float deltaTime) {
+    //move formations and delete empty formations
+    for (int i = formations.size() - 1; i >= 0; i--)
+    {
+        if (formations[i]->slotAssignments.empty())
+        {
+            delete formations[i];
+            formations.erase(formations.begin() + i);
+
+            UpdateFormationIDs();
+        }
+        else
+        {
+            formations[i]->UpdateSlots();
+        }
+    }
+
     // move the first boid
     if (engine->getInputArrow() != Vector2::zero() && getNbBoids() > 0) {
         Boid* firstBoid = *getAllBoids()->begin();
@@ -220,6 +240,55 @@ void World::Update(float deltaTime) {
     // update positions
     for (auto& b : boids)
         warpParticleIfOutOfBounds(b);
+
+    //draw formation positions
+    if (showRules)
+    {
+        SDL_Renderer* sdlRenderer = engine->window->sdlRenderer;
+
+        for (FormationManager* manager : formations)
+        {
+            int total = manager->slotAssignments.size();
+            Static anchor = manager->GetAnchorPoint();
+
+            for (int i = 0; i < total; i++)
+            {
+                Vector2 pos = manager->pattern->GetSlotLocation(i, total).position;
+
+                float xPos = (pos.x * cos(anchor.orientation)) - (pos.y * sin(anchor.orientation));
+                float yPos = (pos.x * sin(anchor.orientation)) + (pos.y * cos(anchor.orientation));
+                Vector2 position = anchor.position + Vector2(xPos, yPos);
+
+                //float xPos = ((pos.x - anchor.position.x) * cos(anchor.orientation)) - ((anchor.position.y - pos.y) * sin(anchor.orientation)) + anchor.position.x;
+                //float yPos = anchor.position.y - ((pos.x - anchor.position.x) * sin(anchor.orientation)) + ((anchor.position.y - pos.y) * cos(anchor.orientation));
+                //Vector2 position = Vector2(xPos, yPos);
+
+                //Vector2 position = anchor.position + manager->pattern->GetSlotLocation(i, total).position;
+                
+                if (sdlRenderer)
+                {
+                    Polygon::DrawLine(sdlRenderer,
+                        position,
+                        position,
+                        Vector3::Yellow());
+                }
+            }
+
+            Polygon::DrawLine(sdlRenderer,
+                anchor.position,
+                anchor.position,
+                Vector3::Red());
+        }
+    }
+}
+
+void World::UpdateFormationIDs()
+{
+    for (int i = 0; i < formations.size(); i++)
+    {
+        formations[i]->id = i;
+        formations[i]->UpdateIDs();
+    }
 }
 
 int World::getNbBoids() const {

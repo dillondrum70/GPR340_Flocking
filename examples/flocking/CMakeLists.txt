@@ -24,7 +24,7 @@ file(GLOB FLOCKING_SRC
 
 install (FILES ${FLOCKING_INC} DESTINATION include/flocking)
 
-add_executable(flocking ${FLOCKING_SRC} ${FLOCKING_INC})
+add_executable(flocking ${FLOCKING_SRC} ${FLOCKING_INC} "behaviours/FormationManager.h" "behaviours/FormationManager.cpp" "behaviours/FormationPattern.h" "behaviours/FormationPattern.cpp" "behaviours/VFormation.h" "behaviours/VFormation.cpp")
 
 target_include_directories(flocking PUBLIC ${SDL2_INCLUDE_DIR} ${CORE_INC_DIR})
 

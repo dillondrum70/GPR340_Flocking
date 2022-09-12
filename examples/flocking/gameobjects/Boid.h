@@ -7,9 +7,16 @@
 
 class World;
 
+struct Static {
+    Vector2 position;
+    float orientation = 0;
+};
+
 class Boid : public Particle {
 private:
     float detectionRadius = 100.;
+
+    int formationID = -1; //the index of the formation the boid belongs to, -1 for not in formation
 
     std::vector<std::unique_ptr<FlockingRule>> rules;
 
@@ -25,8 +32,12 @@ public:
     bool drawDebugRules = true;
     Vector3 circleColor = Vector3::Purple();
 
+    Static target;
+
     //Constructor
     explicit Boid(Engine *pEngine, World* pWorld);
+
+    ~Boid();
 
     //Getter - Setters
     void setFlockingRules(std::vector<std::unique_ptr<FlockingRule>> const& newRules) {
@@ -45,6 +56,9 @@ public:
     float getDetectionRadius() const {
         return detectionRadius;
     }
+
+    void setFormationID(int idVal) { formationID = idVal; }
+    int getFormationID() const { return formationID; }
 
     void Update(float deltaTime) override;
 

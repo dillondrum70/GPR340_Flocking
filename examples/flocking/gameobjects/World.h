@@ -7,13 +7,16 @@
 
 class Particle;
 
+class FormationManager;
+class VFormation;
+
 // todo: make world a game engine scene manager
 class World: public GameObject {
 private:
     /// MEMBERS
     /// Configuration
     // Boids
-    int nbBoids = 300;
+    int nbBoids = 29;
 
     bool hasConstantSpeed = false;
     float desiredSpeed = 120.0f;
@@ -36,6 +39,18 @@ private:
     /// METHODS
     void initializeRules();
 
+    ~World() { ClearFormations(); }
+
+    void ClearFormations()
+    {
+        for (FormationManager* form : formations)
+        {
+            delete form;
+        }
+
+        formations.clear();
+    }
+
     //Boids
 
     void applyFlockingRulesToAllBoids();
@@ -48,6 +63,9 @@ private:
 public:
     //cached list to manipulate objects
     std::vector<Boid*> boids;
+
+    //formations
+    std::vector<FormationManager*> formations;
 
     /// METHODS
     explicit World(Engine* pEngine);
@@ -65,6 +83,8 @@ public:
 
     //Update
     void Update(float deltaTime) override;
+
+    void UpdateFormationIDs(); //sets formation IDs to their index in the vector
 
     void showConfigurationWindow(float deltaTime);
     void drawPerformanceUI(float deltaTime);
