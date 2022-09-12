@@ -134,8 +134,6 @@ Static FormationManager::GetAnchorPoint()
 	Static result;
 	int count = 0;
 
-	int errors = 0;
-
 	for (count = 0; count < slotAssignments.size(); count++)
 	{
 		if (slotAssignments[count])
@@ -149,22 +147,14 @@ Static FormationManager::GetAnchorPoint()
 				Vector2 dir = slotAssignments[count]->boid->transform.rotation;
 				result.orientation += dir.getAngleRadian();
 			}
-			else
-			{
-				errors++;
-			}
-		}
-		else
-		{
-			errors++;
 		}
 	}
 
 	if (count != 0)
 	{
-		result.position /= (count - errors); //average the positions to get the center like with cohesion
+		result.position /= count; //average the positions to get the center like with cohesion
 
-		result.orientation /= (count - errors); //average the orientations
+		result.orientation /= count; //average the orientations
 	}
 
 	return result;
