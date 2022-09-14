@@ -9,14 +9,14 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
     Vector2 FormationForce;
 
     //Ugly, I know, but so is half this implementation
-    for (FormationManager* form : this->world->formations)
+    /*for (FormationManager* form : this->world->formations)
     {
         form->pattern->slowDist = slowDist;
-    }
+    }*/
     
     //join new formation or stay in current
-    if (!neighborhood.empty())
-    {
+    //if (!neighborhood.empty())
+    //{
         int currentID = boid->getFormationID();
         Vector2 pos = boid->getPosition();
 
@@ -66,19 +66,19 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
                 FormationForce = displacement.normalized();
 
                 //boids slow down as they get close to target, allows others to catch up
-                if (mag < slowDist)
+                /*if (mag < slowDist)
                 {
                     float slowFactor = (mag / slowDist);
                     slowFactor = std::clamp(slowFactor, .5f, 1.f);
                     boid->setSpeed(boid->getMaxSpeed() * slowFactor);
                 }
                 else
-                {
+                {*/
                     boid->setSpeed(boid->getMaxSpeed());
-                }
+                //}
             }
         }
-    }
+    //}
 
     return FormationForce;
 }
@@ -100,7 +100,7 @@ void VFormationRule::CreateNewFormation(Boid* boid)
     formations[index]->AddBoid(boid);
 }
 
-bool VFormationRule::drawImguiRuleExtra() {
+/*bool VFormationRule::drawImguiRuleExtra() {
     ImGui::SetCurrentContext(world->engine->imGuiContext);
     bool valusHasChanged = false;
 
@@ -109,7 +109,7 @@ bool VFormationRule::drawImguiRuleExtra() {
     }
 
     return valusHasChanged;
-}
+}*/
 
 
 
@@ -144,7 +144,7 @@ Static VFormation::GetDriftOffset(std::vector<SlotAssignment*> slotAssignments)
     result.position /= totalAssignments;
     result.orientation /= totalAssignments;
 
-    result.position += Vector2::getVector2FromRadian(result.orientation) * slowDist;
+    result.position += Vector2::getVector2FromRadian(result.orientation)/* * (slowDist + 1)*/;
 
     return result;
 }

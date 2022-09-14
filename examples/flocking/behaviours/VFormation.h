@@ -34,7 +34,7 @@ public:
 
     void CreateNewFormation(Boid* boid);
 
-    bool drawImguiRuleExtra() override;
+    //bool drawImguiRuleExtra() override;
 };
 
 class VFormation : public FormationPattern

@@ -133,6 +133,7 @@ Static FormationManager::GetAnchorPoint()
 {
 	Static result;
 	int count = 0;
+	Vector2 avgVelocity;
 
 	for (count = 0; count < slotAssignments.size(); count++)
 	{
@@ -144,8 +145,8 @@ Static FormationManager::GetAnchorPoint()
 				result.position += slotAssignments[count]->boid->getPosition();
 
 				//sum the atan of the velocity to get the sum of orientations
-				Vector2 dir = slotAssignments[count]->boid->transform.rotation;
-				result.orientation += dir.getAngleRadian();
+				avgVelocity += slotAssignments[count]->boid->getVelocity();
+				
 			}
 		}
 	}
@@ -154,8 +155,10 @@ Static FormationManager::GetAnchorPoint()
 	{
 		result.position /= count; //average the positions to get the center like with cohesion
 
-		result.orientation /= count; //average the orientations
+		avgVelocity /= count; //average the orientations
 	}
+
+	result.orientation += avgVelocity.getAngleRadian();
 
 	return result;
 }

@@ -20,7 +20,7 @@ public:
 	//minimum distance between slots
 	float minDistance = 30.f;
 
-	int slowDist = 0; //copies slowDist from formation rule
+	//int slowDist = 0; //copies slowDist from formation rule
 
 	//drift offset when characters are in the set of slots
 	//slowDist is the distance to the target the boids have to be to start slowing down
