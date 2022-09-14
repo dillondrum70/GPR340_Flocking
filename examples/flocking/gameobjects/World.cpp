@@ -30,7 +30,7 @@ void World::initializeRules() {
     boidsRules.emplace_back(std::make_unique<MouseInfluenceRule>(this, 2.f));
     boidsRules.emplace_back(std::make_unique<BoundedAreaRule>(this, 20, 8.f, false));
     boidsRules.emplace_back(std::make_unique<WindRule>(this, 1.f, 6.f, false));
-    boidsRules.emplace_back(std::make_unique<VFormationRule>(this, 12.0f));
+    boidsRules.emplace_back(std::make_unique<VFormationRule>(this, 6.0f));
 
     //Starting weights are saved as defaults
     defaultWeights.clear();
@@ -78,6 +78,13 @@ void World::setNumberOfBoids(int number) {
         //Remove from end
         for (int i = 0; i < diff; i++) {
             auto go = boids.back();
+
+            int id = go->getFormationID();
+            if (id >= 0)
+            {
+                formations[id]->RemoveBoid(go);
+            }
+
             engine->Destroy(go);
             boids.pop_back();
         }
@@ -245,46 +252,6 @@ void World::Update(float deltaTime) {
             formations[i]->UpdateSlots();
         }
     }
-
-    //draw formation positions
-    /*if (showRules)
-    {
-        SDL_Renderer* sdlRenderer = engine->window->sdlRenderer;
-
-        for (FormationManager* manager : formations)
-        {
-            int total = manager->slotAssignments.size();
-            Static anchor = manager->GetAnchorPoint();
-
-            for (int i = 0; i < total; i++)
-            {
-                Vector2 pos = manager->pattern->GetSlotLocation(i, total).position;
-
-                float xPos = (pos.x * cos(anchor.orientation)) - (pos.y * sin(anchor.orientation));
-                float yPos = (pos.x * sin(anchor.orientation)) + (pos.y * cos(anchor.orientation));
-                Vector2 position = anchor.position + Vector2(xPos, yPos);
-
-                //float xPos = ((pos.x - anchor.position.x) * cos(anchor.orientation)) - ((anchor.position.y - pos.y) * sin(anchor.orientation)) + anchor.position.x;
-                //float yPos = anchor.position.y - ((pos.x - anchor.position.x) * sin(anchor.orientation)) + ((anchor.position.y - pos.y) * cos(anchor.orientation));
-                //Vector2 position = Vector2(xPos, yPos);
-
-                //Vector2 position = anchor.position + manager->pattern->GetSlotLocation(i, total).position;
-
-                if (sdlRenderer)
-                {
-                    Polygon::DrawLine(sdlRenderer,
-                        position,
-                        position,
-                        Vector3::Yellow());
-                }
-            }
-
-            Polygon::DrawLine(sdlRenderer,
-                anchor.position,
-                anchor.position,
-                Vector3::Red());
-        }
-    }*/
 
     // move the first boid
     if (engine->getInputArrow() != Vector2::zero() && getNbBoids() > 0) {

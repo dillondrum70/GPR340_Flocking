@@ -42,16 +42,7 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
 
             if (closeForm < 0) //create new formation if no one nearby regardless of current formation the boid is in, allows for separation
             {
-                //remove from old formation if not close
-                if (currentID >= 0)
-                {
-                    formations[currentID]->RemoveBoid(boid);
-                }
-
-                int index = formations.size();
-                formations.push_back(new FormationManager(this->world, new VFormation(), index));
-
-                formations[index]->AddBoid(boid);
+                CreateNewFormation(boid);
             }
             else if (closeForm != currentID) //if IDs don't match, add boid to new formation
             {
@@ -64,24 +55,60 @@ Vector2 VFormationRule::computeForce(const std::vector<Boid*>& neighborhood, Boi
         if (currentID == boid->getFormationID())
         {
             Vector2 displacement = boid->target.position - pos;
+            float mag = displacement.getMagnitude();
 
-            FormationForce = displacement.normalized();
-
-            //boids slow down as they get close to target, allows others to catch up
-            if (displacement.getMagnitude() < slowDist)
+            if (mag > maxDist) //if too far away from formation, leave it
             {
-                float slowFactor = (displacement.getMagnitude() / slowDist);
-                slowFactor = std::clamp(slowFactor, .5f, 1.f);
-                boid->setSpeed(boid->getMaxSpeed() * slowFactor);
+                CreateNewFormation(boid);
             }
             else
             {
-                boid->setSpeed(boid->getMaxSpeed());
+                FormationForce = displacement.normalized();
+
+                //boids slow down as they get close to target, allows others to catch up
+                if (mag < slowDist)
+                {
+                    float slowFactor = (mag / slowDist);
+                    slowFactor = std::clamp(slowFactor, .5f, 1.f);
+                    boid->setSpeed(boid->getMaxSpeed() * slowFactor);
+                }
+                else
+                {
+                    boid->setSpeed(boid->getMaxSpeed());
+                }
             }
         }
     }
 
     return FormationForce;
+}
+
+void VFormationRule::CreateNewFormation(Boid* boid)
+{
+    std::vector<FormationManager*>& formations = this->world->formations;
+    int currentID = boid->getFormationID();
+
+    //remove from old formation if not close
+    if (currentID >= 0)
+    {
+        formations[currentID]->RemoveBoid(boid);
+    }
+
+    int index = formations.size();
+    formations.push_back(new FormationManager(this->world, new VFormation(), index));
+
+    formations[index]->AddBoid(boid);
+}
+
+bool VFormationRule::drawImguiRuleExtra() {
+    ImGui::SetCurrentContext(world->engine->imGuiContext);
+    bool valusHasChanged = false;
+
+    if (ImGui::DragInt("Slow Distance", &slowDist, 0.05f)) {
+        valusHasChanged = true;
+    }
+
+    return valusHasChanged;
 }
 
 
@@ -147,17 +174,6 @@ Static VFormation::GetSlotLocation(int slotNumber, int totalSlots)
     result.orientation = 0;
 
     return result;
-}
-
-bool VFormationRule::drawImguiRuleExtra() {
-    ImGui::SetCurrentContext(world->engine->imGuiContext);
-    bool valusHasChanged = false;
-
-    if (ImGui::DragInt("Slow Distance", &slowDist, 0.05f)) {
-        valusHasChanged = true;
-    }
-
-    return valusHasChanged;
 }
 
 //can pattern support <slotCount> slots?

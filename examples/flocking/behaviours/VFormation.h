@@ -10,6 +10,8 @@ public:
     //int targetDist = 5; //try to be within 5 pixels of target
     int slowDist = 15; //slow down within 10 pixels of target
 
+    int maxDist = 200; //maximum distance boid can be from slot position before leaving formation
+
     explicit VFormationRule(World* pWorld, float weight = 1., bool isEnabled = true) : FlockingRule(pWorld, Vector3::Yellow(), weight, isEnabled) {}
 
     std::unique_ptr<FlockingRule> clone() override {
@@ -29,6 +31,8 @@ public:
     }
 
     Vector2 computeForce(const std::vector<Boid*>& neighborhood, Boid* boid) override;
+
+    void CreateNewFormation(Boid* boid);
 
     bool drawImguiRuleExtra() override;
 };
